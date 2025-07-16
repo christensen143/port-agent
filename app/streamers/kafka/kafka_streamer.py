@@ -35,7 +35,7 @@ class KafkaStreamer(BaseStreamer):
         if settings.AGENT_ENVIRONMENTS:
             # Extract environment from invocation method body
             msg_environments = []
-            
+
             body = invocation_method.get("body", {})
             if isinstance(body, dict) and "environment" in body:
                 env_value = body.get("environment", "")
@@ -49,7 +49,9 @@ class KafkaStreamer(BaseStreamer):
                 logger.info(
                     "Skip process message from topic %s, partition %d, offset %d: "
                     "no environment specified and agent has environment filter",
-                    topic, msg.partition(), msg.offset()
+                    topic,
+                    msg.partition(),
+                    msg.offset(),
                 )
                 return
 
@@ -58,8 +60,11 @@ class KafkaStreamer(BaseStreamer):
                 logger.info(
                     "Skip process message from topic %s, partition %d, offset %d: "
                     "message environments %s not in allowed environments %s",
-                    topic, msg.partition(), msg.offset(),
-                    msg_environments, settings.AGENT_ENVIRONMENTS
+                    topic,
+                    msg.partition(),
+                    msg.offset(),
+                    msg_environments,
+                    settings.AGENT_ENVIRONMENTS,
                 )
                 return
 

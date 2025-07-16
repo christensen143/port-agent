@@ -50,7 +50,7 @@ class Settings(BaseSettings):
     KAFKA_RUNS_TOPIC: str = ""
 
     CONTROL_THE_PAYLOAD_CONFIG_PATH: Path = Path("./control_the_payload_config.json")
-    
+
     AGENT_ENVIRONMENTS: list[str] = Field(default_factory=list)
 
     @validator("AGENT_ENVIRONMENTS", pre=True)
