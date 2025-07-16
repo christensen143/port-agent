@@ -50,6 +50,21 @@ class Settings(BaseSettings):
     KAFKA_RUNS_TOPIC: str = ""
 
     CONTROL_THE_PAYLOAD_CONFIG_PATH: Path = Path("./control_the_payload_config.json")
+    
+    AGENT_ENVIRONMENTS: list[str] = Field(default_factory=list)
+
+    @validator("AGENT_ENVIRONMENTS", pre=True)
+    def parse_environments(cls, v: Any) -> list[str]:
+        """Parse comma-separated environment list from env var"""
+        if v is None:
+            return []
+        if isinstance(v, str):
+            if not v:
+                return []
+            return [e.strip() for e in v.split(",") if e.strip()]
+        if isinstance(v, list):
+            return v
+        return []
 
     @validator("KAFKA_RUNS_TOPIC", always=True)
     def set_kafka_runs_topic(cls, v: Optional[str], values: dict) -> str:
@@ -64,6 +79,13 @@ class Settings(BaseSettings):
         if isinstance(v, str) and v:
             return v
         return f"{values.get('PORT_ORG_ID')}.change.log"
+
+    @classmethod
+    def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
+        """Override to handle AGENT_ENVIRONMENTS as plain string"""
+        if field_name == "AGENT_ENVIRONMENTS":
+            return raw_val
+        return cls.json_loads(raw_val)  # type: ignore
 
     class Config:
         case_sensitive = True

@@ -2,9 +2,9 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feature/multi-environment-support" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "feature/multi-environment-support" ]
 
 jobs:
   build:
