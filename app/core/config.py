@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -82,14 +83,14 @@ class Settings(BaseSettings):
         case_sensitive = True
         env_file = find_dotenv()
         env_file_encoding = "utf-8"
-        
+
         @classmethod
         def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
             if field_name == "AGENT_ENVIRONMENTS":
                 # Return raw string value, let validator handle parsing
                 return raw_val
             # For other fields, use default JSON parsing
-            return cls.json_loads(raw_val)
+            return json.loads(raw_val)
 
     WEBHOOK_INVOKER_TIMEOUT: float = 30
 
