@@ -80,13 +80,6 @@ class Settings(BaseSettings):
             return v
         return f"{values.get('PORT_ORG_ID')}.change.log"
 
-    @classmethod
-    def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
-        """Override to handle AGENT_ENVIRONMENTS as plain string"""
-        if field_name == "AGENT_ENVIRONMENTS":
-            return raw_val
-        return cls.json_loads(raw_val)  # type: ignore
-
     class Config:
         case_sensitive = True
         env_file = find_dotenv()
