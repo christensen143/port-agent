@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 from dotenv import find_dotenv
 from pydantic import (
@@ -51,16 +51,14 @@ class Settings(BaseSettings):
 
     CONTROL_THE_PAYLOAD_CONFIG_PATH: Path = Path("./control_the_payload_config.json")
 
-    AGENT_ENVIRONMENTS: list[str] = Field(default_factory=list)
+    AGENT_ENVIRONMENTS: Union[str, list[str]] = Field(default="")
 
-    @validator("AGENT_ENVIRONMENTS", pre=True)
+    @validator("AGENT_ENVIRONMENTS", always=True)
     def parse_environments(cls, v: Any) -> list[str]:
         """Parse comma-separated environment list from env var"""
-        if v is None:
+        if v is None or v == "":
             return []
         if isinstance(v, str):
-            if not v:
-                return []
             return [e.strip() for e in v.split(",") if e.strip()]
         if isinstance(v, list):
             return v
@@ -84,6 +82,14 @@ class Settings(BaseSettings):
         case_sensitive = True
         env_file = find_dotenv()
         env_file_encoding = "utf-8"
+        
+        @classmethod
+        def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
+            if field_name == "AGENT_ENVIRONMENTS":
+                # Return raw string value, let validator handle parsing
+                return raw_val
+            # For other fields, use default JSON parsing
+            return cls.json_loads(raw_val)
 
     WEBHOOK_INVOKER_TIMEOUT: float = 30
 
